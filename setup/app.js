@@ -26,7 +26,7 @@ const menu = [
   {
     id: 4,
     title: "country delight",
-    category: "breakfast",
+    category: "french",
     price: 20.99,
     img: "./images/item-4.jpeg",
     desc: `Shabby chic keffiyeh neutra snackwave pork belly shoreditch. Prism austin mlkshk truffaut, `,
@@ -71,4 +71,96 @@ const menu = [
     img: "./images/item-9.jpeg",
     desc: `skateboard fam synth authentic semiotics. Live-edge lyft af, edison bulb yuccie crucifix microdosing.`,
   },
+  {
+    id: 10,
+    title: "Idli Vada",
+    category: "indian",
+    price: 19.99,
+    img: "https://img.freepik.com/premium-photo/idli-vada-south-indian-food_57665-11440.jpg?w=2000",
+    desc: `idli vada with chutney sambar will be super lol xyz.`,
+  }
 ];
+
+const section = document.querySelector(".section-center");
+const btnContainer = document.querySelector(".btn-container");
+
+//generate unique categories
+const categories = uniqueCategories(menu);
+
+function uniqueCategories(menus){
+  const categories = menus.map((menu)=>{
+    return menu.category;
+  })
+  let uniqueCategories = [];
+  categories.forEach((category)=>{
+    if(!uniqueCategories.includes(category)) uniqueCategories.push(category)
+  })
+  return uniqueCategories;
+}
+
+
+
+
+//generate filter buttons
+function generateFilterBtn(categories){
+  categories.forEach((category)=>{
+    const filterBtn = document.createElement("button");
+    filterBtn.classList.add("filter-btn");
+    filterBtn.dataset.id = category;
+    filterBtn.innerText = category;
+
+
+    btnContainer.append(filterBtn);
+  })
+}
+
+generateFilterBtn(categories);
+
+
+
+
+//updating menus logic
+
+const filterBtns = document.querySelectorAll(".filter-btn");
+
+filterBtns.forEach((btn)=>{
+  btn.addEventListener("click",function(){
+    const category = this.dataset.id;
+    let fliteredMenu = menu.filter((item)=>{
+      return item.category === category;
+    })
+
+    if(category === 'all') {
+      updateMenus(menu);
+      return;
+    }
+    updateMenus(fliteredMenu);
+  })
+
+
+})
+
+window.addEventListener("DOMContentLoaded",function(){
+  updateMenus(menu);
+})
+
+
+function updateMenus(menuItems){
+  let displayMenu = menuItems.map((menuItem)=>{
+    return `
+    <article class="menu-item">
+      <img src="${menuItem.img}" class="photo" alt="menu item">
+      <div class="item-info">
+        <header>
+          <h4>${menuItem.title}</h4>
+          <h4 class="price">$${menuItem.price}</h4>
+        </header>
+        <p class="item-text">${menuItem.desc}</p>
+      </div>
+    </article>
+    `
+  });
+
+  displayMenu = displayMenu.join("");
+  section.innerHTML = displayMenu;
+}
