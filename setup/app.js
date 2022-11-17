@@ -83,66 +83,61 @@ const menu = [
 
 const section = document.querySelector(".section-center");
 const btnContainer = document.querySelector(".btn-container");
+let filterBtns;
+window.addEventListener("DOMContentLoaded",function(){
+  updateMenus(menu);
+  const categories = menu.reduce(function(values,item){
+      if(!values.includes(item.category)){
+        values.push(item.category)
+      }
 
-//generate unique categories
-const categories = uniqueCategories(menu);
+      return values;
+  },["all"])
 
-function uniqueCategories(menus){
-  const categories = menus.map((menu)=>{
-    return menu.category;
+  generateFilterBtn(categories)
+  filterBtns = document.querySelectorAll(".filter-btn");
+  filterBtns.forEach((btn)=>{
+    btn.addEventListener("click",function(){
+      const category = this.dataset.id;
+      let fliteredMenu = menu.filter((item)=>{
+        return item.category === category;
+      })
+  
+      if(category === 'all') {
+        updateMenus(menu);
+        return;
+      }
+      updateMenus(fliteredMenu);
+    })
+  
+  
   })
-  let uniqueCategories = [];
-  categories.forEach((category)=>{
-    if(!uniqueCategories.includes(category)) uniqueCategories.push(category)
-  })
-  return uniqueCategories;
-}
 
-
+})
 
 
 //generate filter buttons
 function generateFilterBtn(categories){
-  categories.forEach((category)=>{
-    const filterBtn = document.createElement("button");
-    filterBtn.classList.add("filter-btn");
-    filterBtn.dataset.id = category;
-    filterBtn.innerText = category;
-
-
-    btnContainer.append(filterBtn);
+  categoryElements = categories.map((category)=>{
+    return `
+    <button class="filter-btn" data-id="${category}">${category}</button>
+    `
   })
+
+  categoryElements = categoryElements.join("");
+  btnContainer.innerHTML = categoryElements;
 }
 
-generateFilterBtn(categories);
 
 
 
 
 //updating menus logic
 
-const filterBtns = document.querySelectorAll(".filter-btn");
-
-filterBtns.forEach((btn)=>{
-  btn.addEventListener("click",function(){
-    const category = this.dataset.id;
-    let fliteredMenu = menu.filter((item)=>{
-      return item.category === category;
-    })
-
-    if(category === 'all') {
-      updateMenus(menu);
-      return;
-    }
-    updateMenus(fliteredMenu);
-  })
 
 
-})
 
-window.addEventListener("DOMContentLoaded",function(){
-  updateMenus(menu);
-})
+
 
 
 function updateMenus(menuItems){
